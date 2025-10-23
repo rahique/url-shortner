@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %> | BAIUST Computer Club URL Shortener</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="club-branding">
+          <div class="club-logo">
+            <i
+              class="fas fa-exclamation-triangle"
+              style="font-size: 2rem; color: #ef4444"
+            ></i>
+          </div>
+          <div class="club-info">
+            <div class="club-name">BAIUST Computer Club</div>
+            <div class="university-name">URL Shortener</div>
+          </div>
+        </div>
+        <h1 class="tagline"><%= title %></h1>
+      </header>
+
+      <section class="error-section">
+        <div class="error-container">
+          <div class="error-icon">
+            <i class="fas fa-exclamation-circle"></i>
+          </div>
+          <h2>Oops! Something went wrong</h2>
+          <p class="error-message"><%= message %></p>
+
+          <div class="error-actions">
+            <a href="<%= backUrl || '/' %>" class="btn btn-primary">
+              <i class="fas fa-home"></i>
+              Go Back Home
+            </a>
+            <button onclick="history.back()" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i>
+              Go Back
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="footer-content">
+          <div class="footer-club">BAIUST Computer Club</div>
+          <div class="footer-text">
+            &copy; 2025 BAIUST Computer Club URL Shortener. Built with ❤️ by
+            Computer Club members.
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <style>
+      .error-section {
+        text-align: center;
+        padding: 3rem 1rem;
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .error-container {
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .error-icon {
+        font-size: 4rem;
+        color: #ef4444;
+        margin-bottom: 1rem;
+      }
+
+      .error-section h2 {
+        color: #1f2937;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+      }
+
+      .error-message {
+        color: #6b7280;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+      }
+
+      .error-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+      }
+
+      .btn-secondary:hover {
+        background: #e5e7eb;
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: 480px) {
+        .error-actions {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .btn {
+          width: 100%;
+          max-width: 200px;
+          justify-content: center;
+        }
+      }
+    </style>
+  </body>
+</html>

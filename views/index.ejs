@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %> | BAIUST Computer Club URL Shortener</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <meta
+      name="description"
+      content="BAIUST Computer Club URL Shortener - Create short, memorable links instantly"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="club-branding">
+          <div class="club-logo">
+            <!-- BAIUST Computer Club Logo -->
+            <img src="/club-logo.png" alt="BAIUST Computer Club Logo" />
+          </div>
+          <div class="club-info">
+            <div class="club-name">BAIUST Computer Club</div>
+            <div class="university-name">Bangladesh Army International University of Science and Technology</div>
+        <h1 class="tagline">Smart URL Shortener</h1>
+        <p class="subtitle">
+          Create short, memorable links instantly for our university community
+        </p>
+      </header>
+
+      <!-- Success/Error Messages -->
+      <% if (typeof success !== 'undefined' && success) { %>
+      <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <% if (success === 'created') { %>
+        <span>URL shortened successfully! Your short link is ready.</span>
+        <% } else if (success === 'existing') { %>
+        <span>This URL was already shortened. Here's your existing link:</span>
+        <% } %>
+      </div>
+      <% } %>
+
+      <!-- URL Shortening Form -->
+      <section class="shortener-section">
+        <form action="/shorten" method="POST" class="url-form">
+          <div class="input-group">
+            <input
+              type="url"
+              name="originalUrl"
+              placeholder="Enter your long URL here (e.g., https://example.com/very/long/path)"
+              required
+              class="url-input"
+              value="<%= typeof originalUrl !== 'undefined' ? originalUrl : '' %>"
+            />
+            <button type="submit" class="shorten-btn">
+              <i class="fas fa-magic"></i>
+              Shorten URL
+            </button>
+          </div>
+        </form>
+
+        <!-- Display shortened URL if just created -->
+        <% if (typeof shortId !== 'undefined' && shortId) { %>
+        <div class="result-section">
+          <h3>Your Short URL:</h3>
+          <div class="short-url-container">
+            <input
+              type="text"
+              value="<%= baseUrl %>/<%= shortId %>"
+              readonly
+              class="short-url-input"
+              id="shortUrl"
+            />
+            <button onclick="copyToClipboard()" class="copy-btn">
+              <i class="fas fa-copy"></i>
+              Copy
+            </button>
+          </div>
+          <div class="url-info">
+            <p><strong>Original:</strong> <%= originalUrl %></p>
+            <p><strong>Short ID:</strong> <%= shortId %></p>
+            <p><strong>Created:</strong> Just now</p>
+          </div>
+        </div>
+        <% } %>
+      </section>
+
+      <!-- Statistics Section -->
+      <% if (urls && urls.length > 0) { %>
+      <section class="stats-section">
+        <h2>
+          <i class="fas fa-chart-bar"></i>
+          Recent URLs (<%= urls.length %>)
+        </h2>
+        <div class="url-list">
+          <% urls.forEach(function(url) { %>
+          <div class="url-item">
+            <div class="url-details">
+              <div class="url-row">
+                <span class="short-link">
+                  <a href="/<%= url.shortId %>" target="_blank">
+                    <%= baseUrl %>/<%= url.shortId %>
+                    <i class="fas fa-external-link-alt"></i>
+                  </a>
+                </span>
+                <button
+                  onclick="copyLink('<%= baseUrl %>/<%= url.shortId %>', event)"
+                  class="copy-btn-small"
+                >
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              <div class="original-url">
+                <i class="fas fa-arrow-right"></i>
+                <span><%= url.originalUrl %></span>
+              </div>
+              <div class="url-stats">
+                <span class="stat">
+                  <i class="fas fa-mouse-pointer"></i>
+                  <%= url.clicks %> clicks
+                </span>
+                <span class="stat">
+                  <i class="fas fa-calendar"></i>
+                  <%= new Date(url.createdAt).toLocaleDateString() %>
+                </span>
+                <% if (url.lastClicked) { %>
+                <span class="stat">
+                  <i class="fas fa-clock"></i>
+                  Last: <%= new Date(url.lastClicked).toLocaleDateString() %>
+                </span>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+      </section>
+      <% } %>
+
+      <!-- Features Section -->
+      <section class="features-section">
+        <h2>Why Choose BAIUST Computer Club URL Shortener?</h2>
+        <div class="features-grid">
+          <div class="feature">
+            <i class="fas fa-university"></i>
+            <h3>University Focused</h3>
+            <p>Built specifically for our BAIUST community needs</p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-chart-line"></i>
+            <h3>Analytics</h3>
+            <p>Track clicks and monitor your link performance</p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-users"></i>
+            <h3>Student Community</h3>
+            <p>Designed by students, for students and faculty</p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-laptop-code"></i>
+            <h3>Tech Innovation</h3>
+            <p>Showcasing Computer Club's technical excellence</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="footer-content">
+          <div class="footer-club">BAIUST Computer Club</div>
+          <div class="footer-text">
+            &copy; 2025 BAIUST Computer Club.
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // Enhanced copy to clipboard functionality
+      function copyToClipboard() {
+        const shortUrlInput = document.getElementById("shortUrl");
+        const copyBtn = document.querySelector(".copy-btn");
+        
+        if (!shortUrlInput || !copyBtn) return;
+        
+        // Select the text
+        shortUrlInput.select();
+        shortUrlInput.setSelectionRange(0, 99999);
+
+        // Try modern clipboard API first
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(shortUrlInput.value)
+            .then(() => {
+              showCopySuccess(copyBtn);
+            })
+            .catch(() => {
+              // Fallback to document.execCommand
+              fallbackCopy(shortUrlInput, copyBtn);
+            });
+        } else {
+          // Fallback for older browsers or non-secure contexts
+          fallbackCopy(shortUrlInput, copyBtn);
+        }
+      }
+
+      // Fallback copy method
+      function fallbackCopy(input, button) {
+        try {
+          const successful = document.execCommand('copy');
+          if (successful) {
+            showCopySuccess(button);
+          } else {
+            showCopyError(button);
+          }
+        } catch (err) {
+          showCopyError(button);
+        }
+      }
+
+      // Show copy success animation
+      function showCopySuccess(button) {
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.classList.add('copied');
+        
+        setTimeout(() => {
+          button.innerHTML = originalHTML;
+          button.classList.remove('copied');
+        }, 2000);
+      }
+
+      // Show copy error
+      function showCopyError(button) {
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-exclamation"></i> Error';
+        button.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+        
+        setTimeout(() => {
+          button.innerHTML = originalHTML;
+          button.style.background = '';
+        }, 2000);
+      }
+
+      // Enhanced copy link functionality for URL list
+      function copyLink(url, event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const button = event.target.closest('.copy-btn-small');
+        if (!button) return;
+
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(url)
+            .then(() => {
+              showSmallCopySuccess(button);
+            })
+            .catch(() => {
+              // Create temporary input for fallback
+              const tempInput = document.createElement('input');
+              tempInput.value = url;
+              document.body.appendChild(tempInput);
+              tempInput.select();
+              
+              try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                  showSmallCopySuccess(button);
+                } else {
+                  showSmallCopyError(button);
+                }
+              } catch (err) {
+                showSmallCopyError(button);
+              } finally {
+                document.body.removeChild(tempInput);
+              }
+            });
+        } else {
+          // Fallback method
+          const tempInput = document.createElement('input');
+          tempInput.value = url;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          
+          try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+              showSmallCopySuccess(button);
+            } else {
+              showSmallCopyError(button);
+            }
+          } catch (err) {
+            showSmallCopyError(button);
+          } finally {
+            document.body.removeChild(tempInput);
+          }
+        }
+      }
+
+      // Show small copy success animation
+      function showSmallCopySuccess(button) {
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.style.background = 'rgba(16, 185, 129, 0.4)';
+        button.style.borderColor = '#10b981';
+        
+        setTimeout(() => {
+          button.innerHTML = originalHTML;
+          button.style.background = '';
+          button.style.borderColor = '';
+        }, 2000);
+      }
+
+      // Show small copy error
+      function showSmallCopyError(button) {
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-times"></i>';
+        button.style.background = 'rgba(239, 68, 68, 0.4)';
+        button.style.borderColor = '#ef4444';
+        
+        setTimeout(() => {
+          button.innerHTML = originalHTML;
+          button.style.background = '';
+          button.style.borderColor = '';
+        }, 2000);
+      }
+
+      // Auto-hide success messages
+      setTimeout(() => {
+        const alerts = document.querySelectorAll(".alert");
+        alerts.forEach(alert => {
+          alert.style.opacity = "0";
+          setTimeout(() => {
+            alert.style.display = "none";
+          }, 300);
+        });
+      }, 5000);
+
+      // Add loading animation to form submission
+      document.querySelector('.url-form')?.addEventListener('submit', function(e) {
+        const button = this.querySelector('.shorten-btn');
+        const originalHTML = button.innerHTML;
+        
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+        button.disabled = true;
+        
+        // Re-enable after 10 seconds (failsafe)
+        setTimeout(() => {
+          button.innerHTML = originalHTML;
+          button.disabled = false;
+        }, 10000);
+      });
+    </script>
+  </body>
+</html>
